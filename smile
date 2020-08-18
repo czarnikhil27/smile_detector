@@ -1,0 +1,20 @@
+import cv2 as cv
+face_detector=cv.CascadeClassifier('haarcascade_frontalface_default.xml')
+smile_detector=cv.CascadeClassifier('haarcascade_smile.xml')
+webcamp=cv.VideoCapture(0)
+while(True):
+    succes,frame=webcamp.read()
+    #frame_gray=cv.cvtColor(frame,cv.COLOR_BGR2GRAY)
+    frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    face=face_detector.detectMultiScale(frame_gray)#returns cordinates of faces, if two faces returns 2d
+    for x,y,w,h in face:
+        cv.rectangle(frame,(x,y),(x+w,y+w),(100,200,50),4)#(100,200,50) color
+        the_face=frame[y:y+h,x:x+w]
+        face_gray=cv.cvtColor(the_face,cv.COLOR_BGR2GRAY)
+        smile=smile_detector.detectMultiScale(face_gray,scaleFactor=1.7,minNeighbors=29) #scalefactor blurs the image .if there are many
+        if len(smile)>0:
+            cv.putText(frame,"Smiling",(x,y+h+40),fontScale=3,fontFace=cv.FONT_HERSHEY_PLAIN,color=(255,255,255))
+    cv.imshow("f",frame)
+    cv.waitKey(1)
+webcamp.release()
+cv.destroyAllWindows()
